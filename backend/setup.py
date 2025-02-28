@@ -4,17 +4,16 @@ from fire import Fire
 # Directories to create
 def create_project_structure():
     directories = [
-        'app',
-        'app/api',
-        'app/core',
+        'backend/api',
+        'backend/core',
     ]
 
     files = [
-        'app/main.py',
-        'app/api/routes.py',
-        'app/api/__init__.py',
-        'app/core/analyzer.py',
-        'app/core/__init__.py'
+        'backend/main.py',
+        'backend/api/routes.py',
+        'backend/api/__init__.py',
+        'backend/core/analyzer.py',
+        'backend/core/__init__.py'
     ]
 
     # Create directories
