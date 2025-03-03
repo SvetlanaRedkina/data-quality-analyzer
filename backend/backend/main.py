@@ -112,10 +112,20 @@ async def upload_csv(file: UploadFile = File(...)):
         # Store in column_analysis dict where column is a key and analysis are values
         column_analysis[column] = analysis
 
+    data_quality = {
+        # isna() - True for nulls, first .sum() gets nulls count per column, second .sum() adds column-wise nulls
+        "total missing values:": int(df.isna().sum().sum()),
+        # Percentage of nulls in the dataframe
+        "missing percentage:": round(df.isna().sum().sum() / (len(df) * len(df.columns)) * 100, 2),
+        # Sum duplicate rows
+        "duplicate rows:": int(df.duplicated().sum()),
+    }
+
     # Build response
     response = {
         "file info:": basic_info,
-        "column ana;ysis:": column_analysis
+        "column ana;ysis:": column_analysis,
+        "data quality:": data_quality
     }
 
     return response
