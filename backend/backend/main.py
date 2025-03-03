@@ -66,6 +66,49 @@ async def upload_csv(file: UploadFile = File(...)):
                     "negative count:": int((non_null < 0).sum()),
                 })
 
+        elif pd.api.types.is_string_dtype(col_data) or pd.api.types.is_object_dtype(col_data):
+            non_null = col_data.dropna().astype(str)
+            if len(non_null) > 0:
+                # Store the string length for every non-null cell in the column
+                lengths = non_null.str.len()
+
+                analysis.update({
+                    "min length:": int(lengths.min()),
+                    "max length:": int(lengths.max()),
+                    "avg lemgth:": int(round(lengths.mean(),2)),
+                    "empty strings:": int((non_null == "").sum()),
+                    # Count strings that contain only digits (e.g., "123", "456")
+                    "numeric strings:": int(non_null.str.match(r'^\d+$').sum()),
+                    # Count strings that contain only letters (e.g., "banana", "APPLE")
+                    "alphabetic strings:": int(non_null.str.match(r'^[a-zA-Z]+$').sum()),
+                    # Count strings that contain only letters and digits (e.g., "abc123", not "abc-123")
+                    "alphanumeric strings:": int(non_null.str.match(r'^[a-zA-Z0-9]+$').sum()),
+                    # Count strings that contain at least one special character (e.g., "hello!", "user@example.com")
+                    "with special characters:": int(non_null.str.contains(r'[^a-zA-Z0-9\s]').sum()),
+                    # One or more whitespace characters at the beginning
+                    "leading whitespace:": int(non_null.str.match(r'^\s+').sum()),
+                    # One or more whitespace characters at the end
+                    "trailing whitespace:": int(non_null.str.match(r'\s+').sum()),
+                })
+
+                # Sample frequent values (top 5)
+                value_counts = non_null.value_counts().head(5).to_dict()
+                # value_counts.items() gets key-value pairs from the value_counts dict
+                # for k,v loops through each key-value pair
+                # analysis["top+values"] creates a new dict
+                analysis["top_values"] = {str(k): int(v) for k,v in value_counts.items()}
+
+        elif pd.api.types.is_datetime64_dtype(col_data):
+            non_null = col_data.dropna()
+            if len(non_null) > 0:
+                analysis.update({
+                    "min date:": str(non_null.min()),
+                    "max date:": str(non_null.max()),
+                    "date range days:": int((non_null.max() - non_null.min()).days),
+                    "year distribution:": non_null.dt.year.value_counts().to_dict(),
+                    "day of week distribution:": non_null.dt.dayofweek.value_counts().to_dict(),
+                })
+
         # Store in column_analysis dict where column is a key and analysis are values
         column_analysis[column] = analysis
 
