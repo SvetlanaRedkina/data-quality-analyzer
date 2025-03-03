@@ -32,6 +32,7 @@ def create_project_structure():
             pass
         print(f"Created file: {file_path}")
 
+# '__name__' : 1. when you run a file directly, equals '__main__' 2. when imported, '__name__' = file's name
 if __name__ == "__main__":
     Fire(create_project_structure)
     
