@@ -15,6 +15,7 @@ pytest = "^8.3.4"
 black = "^25.1.0"
 flake8 = "^7.1.2"
 fire = "^0.7.0"
+python-multipart = "^0.0.20"
 
 
 [build-system]
