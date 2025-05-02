@@ -207,6 +207,7 @@ async def upload_csv(file: UploadFile = File(...)):
         "total_missing_values": int(df.isna().sum().sum()),
         "missing_percentage": float(df.isna().sum().sum() / (len(df) * len(df.columns)) * 100),
         "duplicate_rows": int(df.duplicated().sum()),
+        "duplicate_percentage": float(df.duplicated().sum() / len(df) * 100)
     }
 
     # Ensure date_detection is JSON serializable
